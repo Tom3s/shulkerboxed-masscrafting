@@ -1,11 +1,13 @@
 from copy import deepcopy
 import shulker_box_generators
 
-allowed_types = ['minecraft:crafting_shaped', 'minecraft:crafting_shapeless']
+from items import non_64_stack, allowed_types
 
 def check_recipe_eligibility(recipe: object) -> object:
     if recipe['type'] not in allowed_types:
         raise TypeError('Invalid crafting type')
+    if recipe['result']['item'] in non_64_stack:
+        raise MemoryError('Non 64 stack output')
     try:
         count = int(recipe['result']['count'])
         if count > 1:
@@ -31,8 +33,6 @@ def convert_shaped_recipe(recipe: object) -> object:
                 count_dict[letter] += 1
 
     minimum_key = min(count_dict, key=count_dict.get)
-
-    print(minimum_key)
 
     for dict_key in new_recipe['key']:
         item_identifier = new_recipe['key'][dict_key]['item']
