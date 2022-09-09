@@ -18,20 +18,25 @@ def check_recipe_eligibility(recipe: object) -> object:
 def convert_shaped_recipe(recipe: object) -> object:
     #raise TypeError('not yet implemented')
     new_recipe = deepcopy(recipe)
-    special_key = ' '
-    for dict_key in new_recipe['key']:
-        if special_key == ' ':
-            special_key = dict_key
-        item_identifier = new_recipe['key'][dict_key]['item']
-        new_recipe['key'][dict_key] = shulker_box_generators.generate_all_shulker_box_variants(item_identifier, True)
-    
-    new_recipe['key']['^'] = shulker_box_generators.generate_all_shulker_box_variants(recipe['key'][special_key]['item'], False)
 
-    for i in range(new_recipe['pattern'].__len__()):
-        if special_key not in new_recipe['pattern'][i]:
-            continue
-        new_recipe['pattern'][i] = new_recipe['pattern'][i].replace(special_key, '^', 1)
-        break
+    count_dict = dict()
+
+    for row in recipe['pattern']:
+        for letter in row:
+            if letter == ' ':
+                continue
+            if letter not in count_dict.keys():
+                count_dict[letter] = 1
+            else:
+                count_dict[letter] += 1
+
+    minimum_key = min(count_dict, key=count_dict.get)
+
+    print(minimum_key)
+
+    for dict_key in new_recipe['key']:
+        item_identifier = new_recipe['key'][dict_key]['item']
+        new_recipe['key'][dict_key] = shulker_box_generators.generate_all_shulker_box_variants(item_identifier, dict_key != minimum_key)
     
     new_recipe['result'] = shulker_box_generators.generate_result_shulker_box(recipe['result']['item'])
     return new_recipe
