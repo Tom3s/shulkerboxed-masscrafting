@@ -44,11 +44,21 @@ def convert_shaped_recipe(recipe: object) -> object:
 def convert_shapeless_recipe(recipe: object) -> object:
     new_recipe = deepcopy(recipe)
     new_recipe['ingredients'] = list()
-    box_used = False
+    
+    count_dict = dict()
+
+    for ingredient in recipe['ingredients']:
+        item_id = ingredient['item']
+        if item_id not in count_dict.keys():
+            count_dict[item_id] = 1
+        else:
+            count_dict[item_id] += 1
+    
+    minimum_item_id = min(count_dict, key = count_dict.get)
+
     for ingredient in recipe['ingredients']:
         item_identifier = ingredient['item']
-        new_recipe['ingredients'].append(shulker_box_generators.generate_all_shulker_box_variants(item_identifier, box_used))
-        box_used = True
+        new_recipe['ingredients'].append(shulker_box_generators.generate_all_shulker_box_variants(item_identifier, item_identifier != minimum_item_id))
 
     new_recipe['result'] = shulker_box_generators.generate_result_shulker_box(recipe['result']['item'])
     return new_recipe
