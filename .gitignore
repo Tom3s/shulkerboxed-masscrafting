@@ -152,5 +152,6 @@ cython_debug/
 #.idea/
 
 recipes_original
+recipes_with_shulkerboxes
 recipes_test
 test.json

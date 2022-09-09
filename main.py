@@ -1,9 +1,11 @@
 import os
 import json
-from shulker_box_generators import generate_filled_shulker_box
+
+from recipe_converter import convert_recipe_to_shulkerboxed
 
 # name of directory with recipe JSONs
-dir_with_recipes = 'recipes_original'
+dir_with_recipes = 'recipes_test'
+dir_output = 'recipes_with_shulkerboxes'
 
 
 
@@ -16,13 +18,17 @@ if __name__ == '__main__':
         if os.path.isfile(full_path): # this should be a recipe.json
             with open(full_path) as file_object:
                 recipe = json.load(file_object)
+                print(f'Loaded recipe {recipe_file_name}')
 
-                curr_type = recipe["type"]
-                if curr_type not in types:
-                    types.append(curr_type)
-
+                try:
+                    converted_recipe = convert_recipe_to_shulkerboxed(recipe)
+                    print(f'Converted recipe {recipe_file_name} to shulkerboxed')
+                    with open(dir_output + '/' + recipe_file_name, 'w') as outfile:
+                        json.dump(converted_recipe, outfile, indent = 4)
+                    print(f'Shulkerboxed {recipe_file_name} saved!')
+                except TypeError as error:
+                    print(error)
             pass
 
     # print(generate_filled_shulker_box("minecraft:diamond", "shulker_box"))
-    print(types)
     pass

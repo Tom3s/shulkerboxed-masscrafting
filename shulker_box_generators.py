@@ -19,7 +19,7 @@ all_shulker_box_types = [
 ]
 
 
-def generate_filled_shulker_box(item: str, shulker_type: str) -> object:
+def generate_filled_shulker_box_nbt(item: str) -> object:
     filled_box = dict()
 
     filled_box["BlockEntityTag"] = dict()
@@ -39,6 +39,25 @@ def generate_filled_shulker_box(item: str, shulker_type: str) -> object:
 
     return filled_box
 
+def generate_all_shulker_box_variants(item: str, left_over: bool) -> list:
+    list_of_variants = list()
+    for box in all_shulker_box_types:
+        single_variant = dict()
+        single_variant['item'] = box
+        single_variant['data'] = {
+            'require': generate_filled_shulker_box_nbt(item)
+        }
+        if left_over:
+            single_variant['remainder'] = {'item': box }
+        list_of_variants.append(single_variant)
+    
+    return list_of_variants
+
+def generate_result_shulker_box(item: str):
+    return {
+        'item': 'minecraft:shulker_box',
+        'data': generate_filled_shulker_box_nbt(item)
+    }
 
 if __name__ == '__main__':
     pass
