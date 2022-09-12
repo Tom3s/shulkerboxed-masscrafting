@@ -1,4 +1,5 @@
 from copy import deepcopy
+from honey_block_shulker_generator import generate_16_stack_shulker_box_nbt, generate_6_75_shulker_box
 import shulker_box_generators
 
 from items import non_64_stack, allowed_types
@@ -63,9 +64,38 @@ def convert_shapeless_recipe(recipe: object) -> object:
     new_recipe['result'] = shulker_box_generators.generate_result_shulker_box(recipe['result']['item'])
     return new_recipe
 
+def create_honey_block_recipe() -> object:
+    recipe = dict()
+    recipe['type'] = 'minecraft:crafting_shaped'
+    recipe['key'] = {
+        'b': {
+            'tag': 'grouping:shulkers',
+            'data':{
+                'require': generate_16_stack_shulker_box_nbt("minecraft:honey_bottle")
+            },
+            'remainder': {
+                'item': 'minecraft:shulker_box',
+                'data': generate_6_75_shulker_box('minecraft:glass_bottle')
+            }
+        }
+    }
+    recipe['pattern'] = [
+        "bb",
+        "bb"
+    ]
+    recipe['result'] = {
+        "item": "minecraft:shulker_box",
+        "data": generate_6_75_shulker_box('minecraft:honey_block')
+    }
+
+    return recipe
+
 def convert_recipe_to_shulkerboxed(recipe: object) -> object:
     
     check_recipe_eligibility(recipe) # recipe can be converted to shulker boxed
+
+    if recipe['result']['item'] == 'minecraft:honey_block':
+        return create_honey_block_recipe()
 
     if recipe['type'] == 'minecraft:crafting_shaped':
         return convert_shaped_recipe(recipe)

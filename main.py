@@ -4,7 +4,7 @@ import json
 from recipe_converter import convert_recipe_to_shulkerboxed
 
 # name of directory with recipe JSONs
-dir_with_recipes = 'recipes_original'
+dir_with_recipes = 'recipes_test'
 dir_output = 'recipes_with_shulkerboxes'
 
 
