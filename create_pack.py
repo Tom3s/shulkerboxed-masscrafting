@@ -29,6 +29,8 @@ for file_name in os.listdir(src):
     if os.path.isfile(src_file):
         shutil.copy(src_file, dest_file)
 
+shutil.copy('./piston.json', dest + '/piston.json')
+
 shutil.make_archive(f'{pack_name}-{version}', 'zip', './temp')
 
 shutil.rmtree('./temp')
