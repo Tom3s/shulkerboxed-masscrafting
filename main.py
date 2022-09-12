@@ -4,7 +4,7 @@ import json
 from recipe_converter import convert_recipe_to_shulkerboxed
 
 # name of directory with recipe JSONs
-dir_with_recipes = 'recipes_test'
+dir_with_recipes = 'recipes_original' # this is taken from minecraft.jar/data/crafting/recipes
 dir_output = 'recipes_with_shulkerboxes'
 
 

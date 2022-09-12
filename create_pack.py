@@ -1,7 +1,8 @@
 import os
 import shutil
 
-pack_name = 'Shulker Boxed Mass Crafting'
+pack_name = 'Shulker.Boxed.Mass.Crafting'
+version = 'v1.1'
 
 os.mkdir('./temp', mode=0o777)
 os.mkdir('./temp/data', mode=0o777)
@@ -28,6 +29,6 @@ for file_name in os.listdir(src):
     if os.path.isfile(src_file):
         shutil.copy(src_file, dest_file)
 
-shutil.make_archive(pack_name, 'zip', './temp')
+shutil.make_archive(f'{pack_name}-{version}', 'zip', './temp')
 
 shutil.rmtree('./temp')
