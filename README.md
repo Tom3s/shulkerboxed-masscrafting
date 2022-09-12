@@ -33,6 +33,4 @@ OR
 
 - Some recipes consume more than one shulker box (ex. anvil)
     - _this is due to a limitation of the NBT Crafting mod_
-- Only works with default shulker boxes
-    - _some more common recipes **(such as repeaters or comparators)** also work with White Shulker Boxes_
 - Recipes that use tags (ex. #minecraft:planks) are not working (exception: piston)
