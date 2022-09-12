@@ -3,3 +3,4 @@
 - [ ] Selector list for non manual pack compilation
 - [ ] New dispenser recipe
 - [x] Work for any shulker box
+- [ ] converter for tagged recipes
