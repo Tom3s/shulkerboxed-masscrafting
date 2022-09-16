@@ -1,7 +1,7 @@
 import os
 import json
 
-from recipe_converter import convert_recipe_to_shulkerboxed
+from recipe_converter import recipe_converter
 
 # name of directory with recipe JSONs
 dir_with_recipes = 'recipes_original' # this is taken from minecraft.jar/data/crafting/recipes
@@ -28,7 +28,7 @@ if __name__ == '__main__':
                 print(f'Loaded recipe {recipe_file_name}')
 
                 try:
-                    converted_recipe = convert_recipe_to_shulkerboxed(recipe)
+                    converted_recipe = recipe_converter(recipe).get_shulker_boxed_recipe()
                     print(f'Converted recipe {recipe_file_name} to shulkerboxed')
                     with open(dir_output + '/' + recipe_file_name, 'w') as outfile:
                         json.dump(converted_recipe, outfile, indent = 4)

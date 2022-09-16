@@ -1,107 +1,74 @@
-from copy import deepcopy
-from honey_block_shulker_generator import generate_16_stack_shulker_box_nbt, generate_6_75_shulker_box
-import shulker_box_generators
+from shulker_box_generators import shulker_box_generator
+from items import item_stack_sizes
 
-from items import non_64_stack, allowed_types
+class recipe_converter:
+    allowed_crafting_types = ['minecraft:crafting_shaped', 'minecraft:crafting_shapeless']
+    def __init__(self, recipe: object):
+        self.__type = recipe['type']
+        self.__group = recipe['group'] + '_shulker_boxed'
 
-def check_recipe_eligibility(recipe: object) -> object:
-    if recipe['type'] not in allowed_types:
-        raise TypeError('Invalid crafting type')
-    if recipe['result']['item'] in non_64_stack:
-        raise MemoryError('Non 64 stack output')
-    try:
-        count = int(recipe['result']['count'])
-        if count > 1:
-            raise ValueError('Recipe output too high')
-    except ValueError:
-        raise ValueError('Invalid count data')
-    except KeyError: # no count attribute found
+        try:
+            self.__recipe_keys = recipe['key']
+            self.__pattern = recipe['pattern']
+        except:
+            self.__recipe_keys = None
+            self.__pattern = None
+        
+        try:
+            self.__ingredients = recipe['ingredients']
+        except:
+            self.__ingredients = None
+
+        self.__result = recipe['result']['item']
+        try:
+            self.__result_count = recipe['result']['count']
+        except:
+            self.__result_count = 1
         pass
 
-def convert_shaped_recipe(recipe: object) -> object:
-    #raise TypeError('not yet implemented')
-    new_recipe = deepcopy(recipe)
+    def __check_recipe_eligibility(self):
+        if self.__type not in recipe_converter.allowed_crafting_types:
+            raise TypeError('Invalid crafting type')
+        if item_stack_sizes[self.__result] != 64:
+            raise MemoryError('Non 64 stack output')
+        
+        if self.__result_count > 1:
+            raise ValueError('Recipe output too high')
 
-    count_dict = dict()
-
-    for row in recipe['pattern']:
-        for letter in row:
-            if letter == ' ':
-                continue
-            if letter not in count_dict.keys():
-                count_dict[letter] = 1
-            else:
-                count_dict[letter] += 1
-
-    minimum_key = min(count_dict, key=count_dict.get)
-
-    for dict_key in new_recipe['key']:
-        item_identifier = new_recipe['key'][dict_key]['item']
-        new_recipe['key'][dict_key] = shulker_box_generators.generate_all_shulker_box_variants(item_identifier, dict_key != minimum_key)
-    
-    new_recipe['result'] = shulker_box_generators.generate_result_shulker_box(recipe['result']['item'])
-    return new_recipe
-
-def convert_shapeless_recipe(recipe: object) -> object:
-    new_recipe = deepcopy(recipe)
-    new_recipe['ingredients'] = list()
-    
-    count_dict = dict()
-
-    for ingredient in recipe['ingredients']:
-        item_id = ingredient['item']
-        if item_id not in count_dict.keys():
-            count_dict[item_id] = 1
-        else:
-            count_dict[item_id] += 1
-    
-    minimum_item_id = min(count_dict, key = count_dict.get)
-
-    for ingredient in recipe['ingredients']:
-        item_identifier = ingredient['item']
-        new_recipe['ingredients'].append(shulker_box_generators.generate_all_shulker_box_variants(item_identifier, item_identifier != minimum_item_id))
-
-    new_recipe['result'] = shulker_box_generators.generate_result_shulker_box(recipe['result']['item'])
-    return new_recipe
-
-def create_honey_block_recipe() -> object:
-    recipe = dict()
-    recipe['type'] = 'minecraft:crafting_shaped'
-    recipe['key'] = {
-        'b': {
-            'tag': 'grouping:shulkers',
-            'data':{
-                'require': generate_16_stack_shulker_box_nbt("minecraft:honey_bottle")
-            },
-            'remainder': {
-                'item': 'minecraft:shulker_box',
-                'data': generate_6_75_shulker_box('minecraft:glass_bottle')
-            }
+    def __get_empty_recipe(self):
+        recipe = {
+            'type': self.__type,
+            'group': self.__group
         }
-    }
-    recipe['pattern'] = [
-        "bb",
-        "bb"
-    ]
-    recipe['result'] = {
-        "item": "minecraft:shulker_box",
-        "data": generate_6_75_shulker_box('minecraft:honey_block')
-    }
-
-    return recipe
-
-def convert_recipe_to_shulkerboxed(recipe: object) -> object:
+        return recipe
     
-    check_recipe_eligibility(recipe) # recipe can be converted to shulker boxed
+    def __get_shaped_crafting_recipe(self):
+        recipe = self.__get_empty_recipe()
+        recipe['pattern'] = self.__pattern
+        keys = dict()
+        for ingredient in self.__recipe_keys.keys():
+            keys[ingredient] = shulker_box_generator(ingredient['item']).generate_ingredient_shulker_box(27)
+        recipe['key'] = keys
+        recipe['result'] = shulker_box_generator(self.__result).generate_result_shulker_box(27)
+        return recipe
 
-    if recipe['result']['item'] == 'minecraft:honey_block':
-        return create_honey_block_recipe()
+    def __get_shapeless_craftin_recipe(self):
+        recipe = self.__get_empty_recipe()
+        ingredients = list()
+        for ing in self.__ingredients:
+            ingredients.append(shulker_box_generator(ing['item']).generate_ingredient_shulker_box(27))
+        recipe['ingredients'] = ingredients
+        recipe['result'] = shulker_box_generator(self.__result).generate_result_shulker_box(27)
+        return recipe
 
-    if recipe['type'] == 'minecraft:crafting_shaped':
-        return convert_shaped_recipe(recipe)
-    elif recipe['type'] == 'minecraft:crafting_shapeless':
-        return convert_shapeless_recipe(recipe)
-    pass
+    def get_shulker_boxed_recipe(self):
+        self.__check_recipe_eligibility()
+        if self.__type == 'minecraft:crafting_shaped':
+            return self.__get_shaped_crafting_recipe()
+        elif self.__type == 'minecraft:crafting_shapeless':
+            return self.__get_shapeless_craftin_recipe()
+        pass
+
 
 if __name__ == '__main__':
     pass
