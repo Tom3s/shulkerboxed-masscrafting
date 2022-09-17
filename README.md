@@ -33,4 +33,4 @@ OR
 
 - Some recipes consume more than one shulker box (ex. anvil)
     - _this is due to a limitation of the NBT Crafting mod_
-- Recipes that use tags (ex. #minecraft:planks) are not working (exception: piston)
+- Recipes that use tags (ex. #minecraft:logs) are not working (exception: #minecraft:planks)
