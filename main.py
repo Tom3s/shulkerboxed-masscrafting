@@ -38,14 +38,16 @@ if __name__ == '__main__':
                     # print(error + 'asdasdasdasd')
                     non_crafting_table.write(recipe_file_name + '\n')
                 except ValueError as error:
-                    # print(f"{error} for recipe {recipe_file_name}")
+                    print(f"{error} for recipe {recipe_file_name}")
                     output_too_high.write(recipe_file_name + '\n')
                 except KeyError as error:
-                    # print(f"Recipe {recipe_file_name} requires tag crafting")
+                    print(f"Recipe {recipe_file_name} failed - {error}")
                     tag_recipes.write(recipe_file_name + '\n')
                 except MemoryError as error:
-                    # print(f"Recipe {recipe_file_name} requires tag crafting")
+                    print(f"Recipe {recipe_file_name} failed - {error}")
                     non_64_stackables.write(recipe_file_name + '\n')
+                except:
+                    print('Uncaught error')
             pass
         
     successful_conversions.close()
