@@ -28,6 +28,9 @@ OR
 
 - step 2: apply the datapack upon world generation
 
+_!IMPORTANT NOTE!_
+
+- Sometimes the datapack fails to load the first time, in that case simply relogging/restarting the server should fix te issue
 
 # Known Issues
 
